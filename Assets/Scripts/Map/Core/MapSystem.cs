@@ -48,6 +48,15 @@ namespace Icefall.Map.Core
         [Header("Visualization Settings")]
         [SerializeField] private int renderDistance = 10;  // Дистанция рендеринга в чанках
 
+        [Header("Debug")]
+        [SerializeField] private bool verboseLogs = false;
+
+        private void LogV(string message)
+        {
+            if (verboseLogs)
+                Debug.Log(message);
+        }
+
         // События
         public event Action<BuildingData> OnBuildingPlaced;
         public event Action<int> OnBuildingRemoved;
@@ -71,7 +80,7 @@ namespace Icefall.Map.Core
             instance = this;
             DontDestroyOnLoad(gameObject);
 
-            Debug.Log("MapSystem: Awake - Singleton initialized");
+            LogV("MapSystem: Awake - Singleton initialized");
         }
 
         private void Start()
@@ -93,19 +102,19 @@ namespace Icefall.Map.Core
                 return;
             }
 
-            Debug.Log("MapSystem: Initializing map system...");
+            LogV("MapSystem: Initializing map system...");
 
             // 1. Создаём данные карты
             MapData = new MapData();
-            Debug.Log($"MapSystem: MapData created - {MapData.GetStats()}");
+            LogV($"MapSystem: MapData created - {MapData.GetStats()}");
 
             // 2. Создаём генератор
             Generator = new MapGenerator(MapData, generationSeed);
-            Debug.Log("MapSystem: MapGenerator created");
+            LogV("MapSystem: MapGenerator created");
 
             // 3. Создаём валидатор
             Validator = new BuildingPlacementValidator(MapData);
-            Debug.Log("MapSystem: BuildingPlacementValidator created");
+            LogV("MapSystem: BuildingPlacementValidator created");
 
             // 4. Создаём менеджер размещения
             PlacementManager = new BuildingPlacementManager(MapData, Validator);
@@ -113,15 +122,15 @@ namespace Icefall.Map.Core
             // Подписываемся на события менеджера размещения
             PlacementManager.OnBuildingPlaced += OnBuildingPlacedHandler;
             PlacementManager.OnBuildingRemoved += OnBuildingRemovedHandler;
-            Debug.Log("MapSystem: BuildingPlacementManager created");
+            LogV("MapSystem: BuildingPlacementManager created");
 
             // 5. Создаём контроллер визуализации
             VisualizationController = new MapVisualizationController(MapData);
             VisualizationController.SetRenderDistance(renderDistance);
-            Debug.Log("MapSystem: MapVisualizationController created");
+            LogV("MapSystem: MapVisualizationController created");
 
             IsInitialized = true;
-            Debug.Log("MapSystem: Initialization complete");
+            LogV("MapSystem: Initialization complete");
 
             // Генерируем карту, если требуется
             if (generateOnStart)
@@ -141,7 +150,7 @@ namespace Icefall.Map.Core
                 return;
             }
 
-            Debug.Log("MapSystem: Generating new map...");
+            LogV("MapSystem: Generating new map...");
 
             // Генерируем карту
             Generator.GenerateNewMap();
@@ -156,7 +165,7 @@ namespace Icefall.Map.Core
             // Триггерим событие
             OnMapGenerated?.Invoke();
 
-            Debug.Log("MapSystem: Map generation complete");
+            LogV("MapSystem: Map generation complete");
             LogMapStats();
         }
 
@@ -171,7 +180,7 @@ namespace Icefall.Map.Core
                 return;
             }
 
-            Debug.Log("MapSystem: Resetting map...");
+            LogV("MapSystem: Resetting map...");
 
             // Очищаем визуализацию
             VisualizationController.ClearVisualization();
@@ -185,7 +194,7 @@ namespace Icefall.Map.Core
             // Триггерим событие
             OnMapReset?.Invoke();
 
-            Debug.Log("MapSystem: Map reset complete");
+            LogV("MapSystem: Map reset complete");
         }
 
         /// <summary>
@@ -244,7 +253,7 @@ namespace Icefall.Map.Core
 
         private void OnBuildingPlacedHandler(BuildingData building)
         {
-            Debug.Log($"MapSystem: Building placed - {building}");
+            LogV($"MapSystem: Building placed - {building}");
             
             // Обновляем визуализацию затронутых чанков
             UpdateChunksForBuilding(building);
@@ -255,7 +264,7 @@ namespace Icefall.Map.Core
 
         private void OnBuildingRemovedHandler(int buildingId)
         {
-            Debug.Log($"MapSystem: Building removed - #{buildingId}");
+            LogV($"MapSystem: Building removed - #{buildingId}");
 
             // Обновляем все dirty чанки
             VisualizationController?.UpdateDirtyChunks();
@@ -294,23 +303,23 @@ namespace Icefall.Map.Core
         /// </summary>
         public void LogMapStats()
         {
-            if (!IsInitialized)
+            if (!IsInitialized || !verboseLogs)
                 return;
 
-            Debug.Log("=== Map Statistics ===");
-            Debug.Log(MapData.GetStats());
-            Debug.Log(VisualizationController.GetVisualizationStats());
+            LogV("=== Map Statistics ===");
+            LogV(MapData.GetStats());
+            LogV(VisualizationController.GetVisualizationStats());
             
             var buildingStats = PlacementManager.GetBuildingStatistics();
             if (buildingStats.Count > 0)
             {
-                Debug.Log("Building types:");
+                LogV("Building types:");
                 foreach (var kvp in buildingStats)
                 {
-                    Debug.Log($"  {kvp.Key}: {kvp.Value}");
+                    LogV($"  {kvp.Key}: {kvp.Value}");
                 }
             }
-            Debug.Log("====================");
+            LogV("====================");
         }
 
         /// <summary>

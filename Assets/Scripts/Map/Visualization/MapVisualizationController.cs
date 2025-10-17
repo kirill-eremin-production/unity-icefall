@@ -20,6 +20,14 @@ namespace Icefall.Map.Visualization
         // Настройки визуализации
         private int renderDistance = 5;  // Количество чанков вокруг камеры для отрисовки
 
+        // Debug
+        private bool verboseLogs = false;
+        private void LogV(string message)
+        {
+            if (verboseLogs)
+                Debug.Log(message);
+        }
+
         public MapVisualizationController(MapData mapData)
         {
             this.mapData = mapData;
@@ -30,7 +38,7 @@ namespace Icefall.Map.Visualization
         /// </summary>
         public void InitializeVisualization()
         {
-            Debug.Log("MapVisualizationController: Initializing visualization...");
+            LogV("MapVisualizationController: Initializing visualization...");
 
             // Создаём корневой объект для карты
             CreateMapRoot();
@@ -44,7 +52,7 @@ namespace Icefall.Map.Visualization
             // Визуализируем все чанки (или только видимые при большой карте)
             VisualizeAllChunks();
 
-            Debug.Log("MapVisualizationController: Visualization initialized");
+            LogV("MapVisualizationController: Visualization initialized");
         }
 
         /// <summary>
@@ -113,7 +121,7 @@ namespace Icefall.Map.Visualization
                 }
             }
 
-            Debug.Log($"MapVisualizationController: Visualized {visualizedCount} chunks");
+            LogV($"MapVisualizationController: Visualized {visualizedCount} chunks");
         }
 
         /// <summary>
@@ -151,7 +159,7 @@ namespace Icefall.Map.Visualization
 
             if (updatedCount > 0)
             {
-                Debug.Log($"MapVisualizationController: Updated {updatedCount} dirty chunks");
+                LogV($"MapVisualizationController: Updated {updatedCount} dirty chunks");
             }
         }
 
@@ -166,7 +174,7 @@ namespace Icefall.Map.Visualization
                 mapRoot = null;
             }
 
-            Debug.Log("MapVisualizationController: Visualization cleared");
+            LogV("MapVisualizationController: Visualization cleared");
         }
 
         /// <summary>
@@ -220,7 +228,7 @@ namespace Icefall.Map.Visualization
         public void SetRenderDistance(int distance)
         {
             renderDistance = Mathf.Max(1, distance);
-            Debug.Log($"MapVisualizationController: Render distance set to {renderDistance} chunks");
+            LogV($"MapVisualizationController: Render distance set to {renderDistance} chunks");
         }
 
         /// <summary>

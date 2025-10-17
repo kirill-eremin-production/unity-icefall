@@ -13,6 +13,15 @@ namespace Icefall.Map
         [SerializeField] private bool autoInitialize = true;
         [SerializeField] private float initializationDelay = 0.5f;
 
+        [Header("Debug")]
+        [SerializeField] private bool verboseLogs = false;
+
+        private void LogV(string message)
+        {
+            if (verboseLogs)
+                Debug.Log(message);
+        }
+
         private void Start()
         {
             if (autoInitialize)
@@ -32,7 +41,7 @@ namespace Icefall.Map
                 return;
             }
 
-            Debug.Log("MapController: Map system initialized successfully");
+            LogV("MapController: Map system initialized successfully");
         }
 
         /// <summary>
@@ -55,7 +64,7 @@ namespace Icefall.Map
                 var building = MapSystem.Instance.PlaceBuilding(type, x, y);
                 if (building != null)
                 {
-                    Debug.Log($"MapController: Building placed at ({x}, {y}): {building}");
+                    LogV($"MapController: Building placed at ({x}, {y}): {building}");
                 }
                 return building;
             }
@@ -77,7 +86,7 @@ namespace Icefall.Map
                 return;
             }
 
-            Debug.Log("MapController: Regenerating map...");
+            LogV("MapController: Regenerating map...");
             MapSystem.Instance.RegenerateMap();
         }
 

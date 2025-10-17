@@ -18,9 +18,18 @@ namespace Icefall.Map.Generation
         private float terrainOffset;                   // Случайное смещение для уникальности
         private float heightOffset;
 
-        public MapGenerator(MapData mapData, int seed = -1)
+        // Debug
+        private bool verboseLogs = false;
+        private void LogV(string message)
+        {
+            if (verboseLogs)
+                Debug.Log(message);
+        }
+
+        public MapGenerator(MapData mapData, int seed = -1, bool verboseLogs = false)
         {
             this.mapData = mapData;
+            this.verboseLogs = verboseLogs;
             
             // Если seed не указан, используем случайный
             if (seed < 0)
@@ -38,7 +47,7 @@ namespace Icefall.Map.Generation
         /// </summary>
         public void GenerateNewMap()
         {
-            Debug.Log("MapGenerator: Starting map generation...");
+            LogV("MapGenerator: Starting map generation...");
 
             // Очистить существующие данные
             mapData.Clear();
@@ -49,7 +58,7 @@ namespace Icefall.Map.Generation
             // Синхронизировать чанки с сеткой
             SyncChunksWithGrid();
 
-            Debug.Log($"MapGenerator: Map generation completed. {mapData.GetStats()}");
+            LogV($"MapGenerator: Map generation completed. {mapData.GetStats()}");
         }
 
         /// <summary>
@@ -158,7 +167,7 @@ namespace Icefall.Map.Generation
         /// </summary>
         public void GenerateObstacles(int count)
         {
-            Debug.Log($"MapGenerator: Generating {count} obstacles...");
+            LogV($"MapGenerator: Generating {count} obstacles...");
 
             int generated = 0;
             int attempts = 0;
@@ -182,7 +191,7 @@ namespace Icefall.Map.Generation
                 }
             }
 
-            Debug.Log($"MapGenerator: Generated {generated} obstacles in {attempts} attempts");
+            LogV($"MapGenerator: Generated {generated} obstacles in {attempts} attempts");
         }
 
         /// <summary>
@@ -191,7 +200,7 @@ namespace Icefall.Map.Generation
         public void ClearMap()
         {
             mapData.Clear();
-            Debug.Log("MapGenerator: Map cleared");
+            LogV("MapGenerator: Map cleared");
         }
 
         /// <summary>
@@ -225,7 +234,7 @@ namespace Icefall.Map.Generation
             if (canPlace)
             {
                 var building = mapData.AddBuilding(type, x, y, width, height);
-                Debug.Log($"MapGenerator: Created test building {building}");
+                LogV($"MapGenerator: Created test building {building}");
             }
             else
             {

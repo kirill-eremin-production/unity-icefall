@@ -18,11 +18,27 @@ namespace Icefall.Map.Visualization
 
         private MapData mapData;
 
+        // Debug
+        private bool verboseLogs = false;
+        private void LogV(string message)
+        {
+            if (verboseLogs)
+                Debug.Log(message);
+        }
+
         public ChunkVisualizer(Material[] terrainMaterials, Material buildingMaterial, MapData mapData)
         {
             this.terrainMaterials = terrainMaterials;
             this.buildingMaterial = buildingMaterial;
             this.mapData = mapData;
+        }
+
+        public ChunkVisualizer(Material[] terrainMaterials, Material buildingMaterial, MapData mapData, bool verboseLogs)
+        {
+            this.terrainMaterials = terrainMaterials;
+            this.buildingMaterial = buildingMaterial;
+            this.mapData = mapData;
+            this.verboseLogs = verboseLogs;
         }
 
         /// <summary>
@@ -48,6 +64,7 @@ namespace Icefall.Map.Visualization
         {
             // Создаём родительский объект чанка
             var chunkObj = new GameObject($"Chunk_{chunk.ChunkX}_{chunk.ChunkY}");
+            chunkObj.layer = LayerMask.NameToLayer("Default"); // Устанавливаем слой Default
             chunkObj.transform.parent = parent;
             
             // Позиционируем чанк в мировых координатах
@@ -93,12 +110,16 @@ namespace Icefall.Map.Visualization
 
             // Создаём GameObject для mesh
             var meshObj = new GameObject("TerrainMesh");
+            meshObj.layer = 0; // Layer 0 = Default (используем номер вместо имени)
             meshObj.transform.parent = chunk.ChunkObject.transform;
             meshObj.transform.localPosition = Vector3.zero;
 
             // Добавляем компоненты
             var meshFilter = meshObj.AddComponent<MeshFilter>();
             var meshRenderer = meshObj.AddComponent<MeshRenderer>();
+            var meshCollider = meshObj.AddComponent<MeshCollider>();
+            
+            LogV($"ChunkVisualizer: Created TerrainMesh at world position {meshObj.transform.position}, layer: {meshObj.layer}, has collider: {meshCollider != null}");
 
             // Создаём и назначаем mesh
             var mesh = new Mesh();
@@ -110,7 +131,18 @@ namespace Icefall.Map.Visualization
             mesh.RecalculateBounds();
 
             meshFilter.mesh = mesh;
+            
+            // ВАЖНО: Настраиваем MeshCollider ПЕРЕД назначением mesh
+            meshCollider.convex = false;  // Для terrain НЕ должен быть convex!
+            meshCollider.cookingOptions = MeshColliderCookingOptions.CookForFasterSimulation
+                                         | MeshColliderCookingOptions.EnableMeshCleaning
+                                         | MeshColliderCookingOptions.WeldColocatedVertices;
+            meshCollider.sharedMesh = null;  // Сначала очищаем
+            meshCollider.sharedMesh = mesh;  // Потом назначаем заново
             chunk.ChunkMesh = mesh;
+
+            LogV($"ChunkVisualizer: Mesh stats - Vertices: {mesh.vertexCount}, Triangles: {mesh.triangles.Length / 3}, Bounds: {mesh.bounds}");
+            LogV($"ChunkVisualizer: MeshCollider - Convex: {meshCollider.convex}, Enabled: {meshCollider.enabled}, SharedMesh: {meshCollider.sharedMesh != null}");
 
             // Назначаем материал (используем первый материал терраина)
             if (terrainMaterials != null && terrainMaterials.Length > 0 && terrainMaterials[0] != null)
@@ -123,6 +155,9 @@ namespace Icefall.Map.Visualization
             {
                 Debug.LogError($"ChunkVisualizer: No valid material for chunk ({chunk.ChunkX}, {chunk.ChunkY})!");
             }
+            
+            // КРИТИЧНО: Синхронизируем physics после создания
+            Physics.SyncTransforms();
         }
 
         /// <summary>
