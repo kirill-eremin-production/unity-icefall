@@ -42,23 +42,29 @@ Visualization Settings:
    - Clipping Planes Near: `0.3`
    - Clipping Planes Far: `2000`
 
-### Шаг 5: Добавление управления камерой
+### Шаг 5: Добавление управления
 
-**ВАЖНО:** Для управления камерой через WASD необходимо добавить [`MapTestController`](MapTestController.cs):
+**Управление камерой:**
 
 1. Выберите **Main Camera** в Hierarchy
 2. В Inspector нажмите **Add Component**
-3. Найдите и добавьте **Map Test Controller**
+3. Найдите и добавьте **Camera Controller** (из [`CameraController.cs`](../Camera/CameraController.cs))
 4. В Inspector настройте параметры:
-   - **Place Test Buildings**: ✓ (размещать тестовые здания при старте)
-   - **Test Building Count**: `5` (количество тестовых зданий)
    - **Camera Move Speed**: `50` (скорость движения камеры)
    - **Camera Rotate Speed**: `100` (скорость вращения камеры)
    - **Camera Zoom Speed**: `50` (скорость зума камеры)
+   - **Use Bounds**: ✓ (ограничивать движение камеры)
 
-**Без этого компонента камера НЕ будет реагировать на WASD!**
+**Управление картой (опционально):**
 
-> **Примечание:** [`MapTestController`](MapTestController.cs) использует новый **Input System Package**. Убедитесь, что пакет установлен через Package Manager (Window → Package Manager → Input System).
+1. Создайте новый пустой GameObject и назовите его "MapController"
+2. В Inspector нажмите **Add Component**
+3. Найдите и добавьте **Map Controller** (из [`MapController.cs`](MapController.cs))
+4. В Inspector настройте параметры:
+   - **Auto Initialize**: ✓ (автоматическая инициализация)
+   - **Initialization Delay**: `0.5` (задержка перед инициализацией)
+
+> **Примечание:** [`CameraController`](../Camera/CameraController.cs) использует новый **Input System Package**. Убедитесь, что пакет установлен через Package Manager (Window → Package Manager → Input System).
 
 ### Шаг 6: Настройка освещения
 
@@ -83,7 +89,7 @@ Visualization Settings:
 ✓ В Console лог "MapGenerator: Map generation completed"
 ✓ В Scene View видна 3D карта с вариативным терраином
 ✓ Разные цвета терраина (белый снег, серые скалы, голубой лёд, коричневая грязь)
-✓ Если включен MapTestController - 5 тестовых зданий
+✓ Карта готова к использованию
 
 ### Если что-то не работает:
 
@@ -100,7 +106,7 @@ Visualization Settings:
    - Откройте Scene View и найдите MapRoot объект
 
 4. **Камера не двигается при нажатии WASD**
-   - Проверьте, что [`MapTestController`](MapTestController.cs) добавлен на **Main Camera**
+   - Проверьте, что [`CameraController`](../Camera/CameraController.cs) добавлен на **Main Camera**
    - Убедитесь, что компонент включен (галочка в Inspector)
    - Проверьте, что Camera Move Speed > 0
    - **Убедитесь, что Input System Package установлен** (Package Manager → Input System)
@@ -111,7 +117,7 @@ Visualization Settings:
    - Отключите размещение тестовых зданий (Place Test Buildings = false)
    - Проверьте Profiler (Window → Analysis → Profiler)
 
-## Управление в режиме Play (если добавлен MapTestController)
+## Управление в режиме Play (если добавлен CameraController)
 
 | Клавиша/Действие | Описание |
 |------------------|----------|
@@ -120,9 +126,6 @@ Visualization Settings:
 | **Q/E** | Вращение камеры вокруг вертикальной оси |
 | **ЛКМ (зажать и двигать)** | Перетаскивание карты (pan) |
 | **Mouse Scroll** | Плавный зум к позиции курсора на карте |
-| **Space** | Разместить случайное здание |
-| **R** | Регенерировать карту |
-| **L** | Показать статистику в Console |
 
 ### Особенности управления:
 
@@ -241,7 +244,8 @@ void HandleMapGenerated()
 - [ ] MapSystem добавлен в сцену
 - [ ] MapSystem настроен (Generate On Start ✓, Visualize On Start ✓)
 - [ ] Камера позиционирована правильно
-- [ ] **MapTestController добавлен на Main Camera** (для управления WASD)
+- [ ] **CameraController добавлен на Main Camera** (для управления WASD)
+- [ ] **MapController добавлен в сцену** (опционально, для управления картой)
 - [ ] Сцена сохранена
 - [ ] Проект компилируется без ошибок
 - [ ] Play Mode работает корректно

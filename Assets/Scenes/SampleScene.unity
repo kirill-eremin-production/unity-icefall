@@ -266,17 +266,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 330585543}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 98b9da8695c141d4aa399e373e2df23b, type: 3}
+  m_Script: {fileID: 11500000, guid: db87dc9e57a01044d94202518b43a9d9, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Icefall.Map.MapTestController
-  placeTestBuildings: 1
-  testBuildingCount: 5
-  cameraMoveSpeed: 50
+  m_EditorClassIdentifier: Assembly-CSharp::Icefall.Controllers.CameraController
+  cameraMoveSpeed: 100
   cameraRotateSpeed: 100
   cameraZoomSpeed: 500
-  shiftSpeedMultiplier: 5
+  shiftSpeedMultiplier: 10
   mouseDragSpeed: 100
   zoomSmoothness: 10
+  useBounds: 1
+  minX: -100
+  maxX: 1100
+  minZ: -100
+  maxZ: 1100
+  minY: 20
+  maxY: 300
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0

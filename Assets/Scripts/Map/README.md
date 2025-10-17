@@ -30,7 +30,8 @@
 1. Откройте сцену [`SampleScene`](../../Scenes/SampleScene.unity)
 2. Создайте пустой GameObject и назовите его "MapSystem"
 3. Добавьте компонент [`MapSystem`](Core/MapSystem.cs)
-4. (Опционально) Создайте GameObject "MapTestController" и добавьте [`MapTestController`](MapTestController.cs)
+4. Для управления камерой добавьте [`CameraController`](../Camera/CameraController.cs) на Main Camera
+5. (Опционально) Создайте GameObject "MapController" и добавьте [`MapController`](MapController.cs)
 
 ### 2. Настройка MapSystem
 
@@ -135,17 +136,30 @@ MapSystem.Instance.ResetMap();
 MapSystem.Instance.GenerateMap();
 ```
 
-## Тестирование
+## Управление камерой
 
-Используйте [`MapTestController`](MapTestController.cs) для тестирования:
+Используйте [`CameraController`](../Camera/CameraController.cs) для управления:
 
 **Клавиши управления:**
-- `WASD` - движение камеры
+- `WASD` - движение камеры (SHIFT для ускорения)
 - `Q/E` - вращение камеры
-- `Mouse Scroll` - зум
-- `Space` - разместить случайное здание
-- `R` - регенерировать карту
-- `L` - логировать статистику
+- `Mouse Drag (LMB)` - перетаскивание карты
+- `Mouse Scroll` - плавный зум к курсору
+
+## Управление картой
+
+Используйте [`MapController`](MapController.cs) для программного управления картой:
+
+```csharp
+// Разместить здание
+mapController.PlaceBuilding(BuildingType.House, x, y);
+
+// Регенерировать карту
+mapController.RegenerateMap();
+
+// Получить количество зданий
+int count = mapController.GetBuildingCount();
+```
 
 ## Типы зданий
 
@@ -206,23 +220,27 @@ MapSystem.Instance.GenerateMap();
 ## Структура файлов
 
 ```
-Assets/Scripts/Map/
-├── Core/
-│   ├── GridCell.cs              - Структура ячейки
-│   ├── BuildingData.cs          - Данные здания
-│   ├── MapChunk.cs              - Структура чанка
-│   ├── MapData.cs               - Контейнер данных
-│   └── MapSystem.cs             - Главный координатор
-├── Generation/
-│   └── MapGenerator.cs          - Генератор карты
-├── Placement/
-│   ├── BuildingPlacementValidator.cs  - Валидатор
-│   └── BuildingPlacementManager.cs    - Менеджер размещения
-├── Visualization/
-│   ├── ChunkVisualizer.cs       - Визуализатор чанка
-│   └── MapVisualizationController.cs  - Контроллер визуализации
-├── MapTestController.cs         - Тестовый контроллер
-└── README.md                    - Этот файл
+Assets/Scripts/
+├── Map/
+│   ├── Core/
+│   │   ├── GridCell.cs              - Структура ячейки
+│   │   ├── BuildingData.cs          - Данные здания
+│   │   ├── MapChunk.cs              - Структура чанка
+│   │   ├── MapData.cs               - Контейнер данных
+│   │   └── MapSystem.cs             - Главный координатор
+│   ├── Generation/
+│   │   └── MapGenerator.cs          - Генератор карты
+│   ├── Placement/
+│   │   ├── BuildingPlacementValidator.cs  - Валидатор
+│   │   └── BuildingPlacementManager.cs    - Менеджер размещения
+│   ├── Visualization/
+│   │   ├── ChunkVisualizer.cs       - Визуализатор чанка
+│   │   └── MapVisualizationController.cs  - Контроллер визуализации
+│   ├── MapController.cs             - Контроллер карты
+│   ├── INTEGRATION_GUIDE.md         - Руководство по интеграции
+│   └── README.md                    - Этот файл
+└── Camera/
+    └── CameraController.cs          - Контроллер камеры
 ```
 
 ## Известные ограничения
