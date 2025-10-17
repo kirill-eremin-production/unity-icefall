@@ -4,7 +4,6 @@
 [Ll]ibrary/
 [Tt]emp/
 [Oo]bj/
-[Bb]uild/
 [Bb]uilds/
 [Ll]ogs/
 [Uu]ser[Ss]ettings/
@@ -78,10 +77,6 @@ crashlytics-build.properties
 ehthumbs.db
 Thumbs.db
 Desktop.ini
-
-# WebGL Build (если хотите игнорировать билды)
-Build/
-WebGL-Test/Build/
 
 # Batch files (раскомментируйте, если не хотите коммитить)
 # *.bat
